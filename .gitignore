@@ -1,0 +1,81 @@
+# ============================================================
+# 策略：預設全部忽略，只用白名單把「程式碼 + 文件」放行。
+# 資料（raw_data / output / ABS / TEDS / PDF / key / pages）一律不上傳。
+# 要新增可上傳的資料夾時，照下面的 pattern 加一組 !dir/ + dir/* 即可。
+# ============================================================
+
+# --- 1. 先把最外層全部擋掉 -----------------------------------
+/*
+
+# --- 2. 放行最外層的檔案 -------------------------------------
+!/.gitignore
+!/README.md
+
+# --- 3. 放行最外層的分析程式資料夾（未來要建的 code/）--------
+!/code/
+
+# --- 4. 一路挖進 data/NTUWS/Code/ ----------------------------
+!/data/
+/data/*
+!/data/NTUWS/
+/data/NTUWS/*
+!/data/NTUWS/Code/
+
+# 之後若要一起上傳 NTUWS 的文件，把下面幾行取消註解：
+# !/data/NTUWS/README.md
+# !/data/NTUWS/PHASE2_README.md
+# !/data/NTUWS/QUESTION_INVENTORY.md
+# !/data/NTUWS/PHASE2_QUESTION_CATALOG.md
+
+# 之後若要加 ABS 的程式碼，比照辦理：
+# !/data/ABS/
+# /data/ABS/*
+# !/data/ABS/*.R
+
+# --- 5. 無論在哪一層，這些都不要（放最後，優先權最高）--------
+# macOS / 編輯器雜物
+.DS_Store
+._*
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+*.Rproj
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.Renviron
+.env
+
+# 資料檔：任何層級都擋，避免以後不小心 commit 進去
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.sav
+*.dta
+*.rds
+*.RDS
+*.rda
+*.zip
+*.rar
+*.7z
+*.pdf
+*.key
+*.pages
+*.docx
+*.pptx
+
+# 圖檔輸出（如果之後想上傳成果圖，把這段刪掉）
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.html
+
+# 常見的輸出資料夾名稱
+output/
+outputs/
+raw_data/
