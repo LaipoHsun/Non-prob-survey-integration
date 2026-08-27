@@ -77,10 +77,7 @@ Rscript -e 'install.packages(c("readxl","dplyr","tidyr","stringr","purrr","write
 
 每個 phase 資料夾裡都有自己的 README，講規則怎麼定、數字多少、有什麼陷阱：
 
-- [`data/NTUWS/README.md`](data/NTUWS/README.md) — 整條 pipeline 的總覽
 - [`data/NTUWS/Code/Phase0_demographic_matching/README.md`](data/NTUWS/Code/Phase0_demographic_matching/README.md)
 - [`data/NTUWS/Code/Phase1_within_wave_duplicates/README.md`](data/NTUWS/Code/Phase1_within_wave_duplicates/README.md)
 - [`data/NTUWS/Code/Phase2_cross_wave_question_matching/README.md`](data/NTUWS/Code/Phase2_cross_wave_question_matching/README.md)
 
-其中 `data/NTUWS/README.md` 本身沒有上傳（`.gitignore` 只放行 `Code/` 底下的東西），
-要看的話在本機開。
