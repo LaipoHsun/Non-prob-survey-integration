@@ -18,6 +18,7 @@ repo 裡有兩條 pipeline：
 **有的**：所有程式碼、母體目標檔、加權與描述統計的成果（表、圖、診斷檔）。
 
 **沒有的**（都在 `.gitignore` 裡）：
+因內有不同ID的個人檔案跟原本回答的人的機密內容,若需要請再和作者聯絡提供
 
 | 缺什麼 | 影響 | 要放哪裡 |
 |---|---|---|
@@ -133,29 +134,14 @@ Rscript data/code/Calculate_stat_population_from_TEDS/portion_of_TEDS_demographi
 
 ---
 
-## 套件
-
-```bash
-Rscript -e 'install.packages(c("readxl","dplyr","tidyr","stringr","purrr","writexl","ggplot2","haven","scales","anesrake"))'
-```
-
-pipeline A 用前七個，pipeline B 用 `readxl` `dplyr` `tidyr` `ggplot2` `scales` `haven` `anesrake`。
-
-R 圖用 `Heiti TC` 字型（macOS 內建），換作業系統要改各程式裡的 `base_family`。
-
----
-
 ## 幾個約定
 
-1. **原始資料唯讀。** 程式只讀原始檔，只寫 `output/`。
-2. **`output/` 整個是可拋棄的**，刪掉重跑就會回來，不要往裡面放手工編輯的東西。
-3. **不 `setwd()`。** 每支程式自己往上找專案根目錄（判斷依據是找得到 `data/code/`），
+1. **`output/` 整個是可拋棄的**，刪掉重跑就會回來，不要往裡面放手工編輯的東西。
+2. **不 `setwd()`。** 每支程式自己往上找專案根目錄（判斷依據是找得到 `data/code/`），
    之後全走絕對路徑，所以在哪個目錄執行都可以。
-4. **產出檔名一律加 `ntuws_` 前綴**，跟之後 ABS 的 `abs_*` 區隔。
-5. **CSV 一律 UTF-8。** 中文在 `Rscript` 的預設 C locale 下會被丟掉，所以每支程式開頭
+3. **產出檔名一律加 `ntuws_` 前綴**，跟之後 ABS 的 `abs_*` 區隔。
+4. **CSV 一律 UTF-8。** 中文在 `Rscript` 的預設 C locale 下會被丟掉，所以每支程式開頭
    都會設定 UTF-8 locale，不要移除那幾行。
-6. **重編碼與類別合併都寫在程式裡**，不去改資料檔。加權時母體端與樣本端會同步套用
-   同一份合併設定，兩邊永遠對得齊。
 
 ---
 
