@@ -56,7 +56,8 @@ Task_1_disolve_population/
 ```
 
 `Code/<Phase>/` 跟 `output/<Phase>/` 是配對的，新開一個 phase 就兩邊各開一個同名資料夾。
-
+Pipeline A的所有內容只需要參考NTUWS內部的資料即可
+其他/code /Input /output 都是放入Pipeline B裡
 ---
 
 ## Pipeline A：資料清理
@@ -100,7 +101,7 @@ Phase 2 要先跑完 Phase 1。
 ---
 
 ## Pipeline B：加權（raking）
-
+所有要重製Pipeline B的 raking所需的資訊皆在 /data/code, /data/Input, /data/output裡 除了少數會用到的資料運算
 `data/code/`。用 anesrake 把樣本的邊際分配拉向母體，算出每人一個權數。
 
 **`raking_NTUWS.R`** —— 主程式。支援兩種樣本結構，用命令列參數切換：
