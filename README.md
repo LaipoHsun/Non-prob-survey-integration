@@ -1,4 +1,4 @@
-# Task 1 — Dissolve Population
+# Integrating method to deal with selection bias problem
 
 台大網路抽獎問卷（NTUWS）的多波追蹤資料整理與加權。這是非機率樣本，最終目的是要跟機率樣本
 （ABS、TEDS）做整合分析，所以要先把 NTUWS 清成可以直接拿來 match 的形狀，再用機率樣本的
