@@ -79,3 +79,71 @@ __pycache__/
 output/
 outputs/
 raw_data/
+
+# 跨資料集對照：decisions.csv 是人工審核的成果，是整條 pipeline 唯一
+# 不可重生的東西，必須進版控。
+# 注意 git 的規則：父目錄被忽略時，底下的 ! 例外是無效的，
+# 所以要從 output/ 開始逐層開一條路，只放行這一個檔案，其餘照舊忽略。
+!output/
+output/*
+!output/crosswalk/
+output/crosswalk/*
+!output/crosswalk/candidates/
+output/crosswalk/candidates/*
+!output/crosswalk/candidates/decisions.csv
+
+# ============================================================
+# raking 專案：上傳 data/code、data/Input、data/output 三個資料夾
+#
+# 這一段必須放在檔案「最後面」——上面的 *.csv / *.png / *.xlsx /
+# output/ 等規則優先權較高，只有寫在後面的 ! 例外才蓋得過去。
+# 另外 git 的規則是：父目錄被忽略時，底下的 ! 例外無效，
+# 所以每一層目錄都要重新放行一次。
+# ============================================================
+
+# --- data/code：程式與說明文件 -------------------------------
+!/data/code/
+/data/code/*
+!/data/code/*.R
+!/data/code/*.md
+!/data/code/Calculate_stat_population_from_TEDS/
+/data/code/Calculate_stat_population_from_TEDS/*
+!/data/code/Calculate_stat_population_from_TEDS/*.R
+!/data/code/Calculate_stat_population_from_TEDS/*.md
+
+# --- data/Input：只放行母體目標檔與說明 ----------------------
+# ★ NTUWS_pooled/ 含個人層資料，整個資料夾不上傳（下面沒有放行它）
+!/data/Input/
+/data/Input/*
+!/data/Input/README.md
+!/data/Input/population_targets/
+/data/Input/population_targets/*
+!/data/Input/population_targets/*.csv
+
+# 保險起見再明確擋一次 NTUWS_pooled 的資料檔
+/data/Input/NTUWS_pooled/**
+/data/Input/NTUWS_pooled/*.csv
+/data/Input/NTUWS_pooled/*.xlsx
+
+# --- data/output：表、圖、診斷檔 -----------------------------
+!/data/output/
+/data/output/*
+!/data/output/README.md
+!/data/output/portion_of_TEDS/
+/data/output/portion_of_TEDS/*
+!/data/output/portion_of_TEDS/*/
+!/data/output/portion_of_TEDS/*/*.csv
+!/data/output/portion_of_TEDS/*/*.md
+!/data/output/portion_of_TEDS/*/*.png
+!/data/output/raking/
+/data/output/raking/*
+!/data/output/raking/README.md
+!/data/output/raking/*/
+!/data/output/raking/*/*.csv
+!/data/output/raking/*/*.png
+!/data/output/raking/*/*.txt
+
+# --- 修正：上面第 5 段的 `!output/` 會把「任何一層」叫 output 的資料夾
+#     都放行（因為它沒有斜線，不受根目錄錨定），連帶讓
+#     data/NTUWS/output/ 底下的 .md 檔漏出去。這裡明確擋回來。
+/data/NTUWS/output/

@@ -1,0 +1,151 @@
+raking_NTUWS.R  診斷報告   2026-09-01 18:42:27
+
+樣本：LS_2405（基準年 2024）
+原始列數：725
+偵測到的欄位：sex=S1  birth=S2  ageband=-  edu=S3   ethnicity=S4  city=S5_1  zip=-  party_kmt=B1_3 _1  party_dpp=B1_3 _2  party_tpp=B1_3 _3
+補充來源 Welcome：15612 筆
+重複 memberId 處理 -> smart：回答一致去重 0 筆；回答不同視為獨立樣本 5 筆
+進入分析的列數：725
+
+---- collapse 與對齊檢查 ----
+  sex        版本=原始  類別數=2  NA=0 (0.0%)  類別：男性 / 女性
+  ! age：母體無 18-19 歲組，該組 4 人設為 NA
+  age        版本=A       類別數=5  NA=7 (1.0%)  類別：20至29歲 / 30至39歲 / 40至49歲 / 50至59歲 / 60歲及以上
+  ! 教育程度有未對應的選項（設為 NA）：其他，請說明
+  edu：類別「專科」對不上，自動退回版本 C
+  ! 教育程度有未對應的選項（設為 NA）：其他，請說明
+  edu        版本=C       類別數=2  NA=3 (0.4%)  類別：高中職及以下 / 專科及以上
+  arear      版本=A       類別數=6  NA=0 (0.0%)  類別：北北基宜蘭區 / 桃竹苗區 / 中彰投區 / 雲嘉南區 / 高屏澎湖區 / 花東外島區
+  party_kmt  版本=C       類別數=3  NA=0 (0.0%)  類別：0-4 冷淡 / 5 中間 / 6-10 溫暖
+  party_dpp  版本=C       類別數=3  NA=0 (0.0%)  類別：0-4 冷淡 / 5 中間 / 6-10 溫暖
+  party_tpp  版本=C       類別數=3  NA=0 (0.0%)  類別：0-4 冷淡 / 5 中間 / 6-10 溫暖
+
+完整個案：715 / 725（因 raking 變數缺值排除 10 人）
+
+---- 執行 anesrake ----
+  [anesrake 警告] Raking algorithm achieved only partial convergence, please check the results to ensure that sufficient convergence was achieved.  Average change in weight per case is 3.13059911993069e-05
+  [anesrake 警告] Results are stable, but do not perfectly match population marginals
+  [anesrake 警告] Raking algorithm achieved only partial convergence, please check the results to ensure that sufficient convergence was achieved.  Average change in weight per case is 2.61581269438006e-05
+實際納入 raking 的變數：age, edu, arear, party_kmt, party_dpp, party_tpp, sex
+權數：min=0.018 max=5.000 mean=1.000 sd=1.645
+design effect = 3.707；有效樣本數 = 193
+出圖／出表的變數：sex, age, edu, arear, ethnicity, party_kmt, party_dpp, party_tpp（其中 sex, age, edu, arear, party_kmt, party_dpp, party_tpp 有納入 raking）
+raking 後與母體的最大差距（納入 raking 者）：0.010 個百分點
+未納入 raking 者與母體的最大差距：4.370 個百分點
+有 61 人 (8.5%) 的權數觸到上限 cap=5；若母體對不準可考慮調高 cap
+  [collapse 對比] sex：版本 原始 未做任何合併，略過
+  [collapse 對比] age：版本 A 未做任何合併，略過
+  ! 教育程度有未對應的選項（設為 NA）：其他，請說明
+  [collapse 對比] arear：版本 A 未做任何合併，略過
+
+---- anesrake summary ----
+$convergence
+[1] "Results are stable, but do not perfectly match population marginals after 72 iterations"
+
+$base.weights
+[1] "No Base Weights Were Used"
+
+$raking.variables
+[1] "age"       "edu"       "arear"     "party_kmt" "party_dpp" "party_tpp"
+[7] "sex"      
+
+$weight.summary
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+0.01831 0.04790 0.09397 1.00000 1.39743 5.00009 
+
+$selection.method
+[1] "variable selection conducted using _pctlim_ - discrepancies selected using _total_."
+
+$general.design.effect
+[1] 3.702735
+
+$sex
+         Target Unweighted N Unweighted %    Wtd N     Wtd % Change in %
+男性  0.4882406          335    0.4685315 349.0905 0.4882385  0.01970703
+女性  0.5117594          380    0.5314685 365.9095 0.5117615 -0.01970703
+Total 1.0000000          715    1.0000000 715.0000 1.0000000  0.03941406
+       Resid. Disc. Orig. Disc.
+男性   2.149334e-06  0.01970918
+女性  -2.149334e-06 -0.01970918
+Total  4.298669e-06  0.03941836
+
+$age
+              Target Unweighted N Unweighted %    Wtd N     Wtd % Change in %
+20至29歲   0.1459696          138   0.19300699 104.3688 0.1459704 -0.04703663
+30至39歲   0.1654529          210   0.29370629 118.3077 0.1654653 -0.12824095
+40至49歲   0.1988288          231   0.32307692 142.1744 0.1988453 -0.12423167
+50至59歲   0.1808390           87   0.12167832 129.3096 0.1808526  0.05917433
+60歲及以上 0.3089097           49   0.06853147 220.8395 0.3088664  0.24033492
+Total      1.0000000          715   1.00000000 715.0000 1.0000000  0.59901850
+            Resid. Disc. Orig. Disc.
+20至29歲   -7.691150e-07 -0.04703740
+30至39歲   -1.246090e-05 -0.12825341
+40至49歲   -1.650077e-05 -0.12424817
+50至59歲   -1.360938e-05  0.05916072
+60歲及以上  4.334017e-05  0.24037826
+Total       8.668033e-05  0.59907796
+
+$edu
+                Target Unweighted N Unweighted %    Wtd N    Wtd % Change in %
+高中職及以下 0.4890876           99    0.1384615 349.6643 0.489041   0.3505795
+專科及以上   0.5109124          616    0.8615385 365.3357 0.510959  -0.3505795
+Total        1.0000000          715    1.0000000 715.0000 1.000000   0.7011590
+              Resid. Disc. Orig. Disc.
+高中職及以下  4.661462e-05   0.3506261
+專科及以上   -4.661462e-05  -0.3506261
+Total         9.322923e-05   0.7012522
+
+$arear
+                 Target Unweighted N Unweighted %     Wtd N      Wtd %
+北北基宜蘭區 0.31681309          264   0.36923077 226.52009 0.31681131
+桃竹苗區     0.16141522          113   0.15804196 115.41050 0.16141329
+中彰投區     0.19262968          148   0.20699301 137.73160 0.19263161
+雲嘉南區     0.14146905           81   0.11328671 101.15180 0.14147105
+高屏澎湖區   0.15777999           96   0.13426573 112.81410 0.15778195
+花東外島區   0.02989296           13   0.01818182  21.37191 0.02989079
+Total        1.00000000          715   1.00000000 715.00000 1.00000000
+              Change in %  Resid. Disc. Orig. Disc.
+北北基宜蘭區 -0.052419456  1.778080e-06 -0.05241768
+桃竹苗區      0.003371331  1.928857e-06  0.00337326
+中彰投區     -0.014361396 -1.926110e-06 -0.01436332
+雲嘉南區      0.028184335 -1.995573e-06  0.02818234
+高屏澎湖區    0.023516219 -1.960301e-06  0.02351426
+花東外島區    0.011708967  2.175047e-06  0.01171114
+Total         0.133561705  1.176397e-05  0.13356200
+
+$party_kmt
+             Target Unweighted N Unweighted %    Wtd N    Wtd % Change in %
+0-4 冷淡  0.4121739          417    0.5832168 294.6994 0.412167 -0.17104979
+5 中間    0.2600000          206    0.2881119 185.8857 0.259980 -0.02813186
+6-10 溫暖 0.3278261           92    0.1286713 234.4149 0.327853  0.19918164
+Total     1.0000000          715    1.0000000 715.0000 1.000000  0.39836329
+           Resid. Disc. Orig. Disc.
+0-4 冷淡   6.917949e-06 -0.17104287
+5 中間     1.996786e-05 -0.02811189
+6-10 溫暖 -2.688581e-05  0.19915476
+Total      5.377162e-05  0.39830952
+
+$party_dpp
+             Target Unweighted N Unweighted %    Wtd N     Wtd % Change in %
+0-4 冷淡  0.3844156          417    0.5832168 274.8636 0.3844246 -0.19879222
+5 中間    0.2060606          197    0.2755245 147.3292 0.2060548 -0.06946967
+6-10 溫暖 0.4095238          101    0.1412587 292.8073 0.4095206  0.26826190
+Total     1.0000000          715    1.0000000 715.0000 1.0000000  0.53652379
+           Resid. Disc. Orig. Disc.
+0-4 冷淡  -8.975265e-06 -0.19880120
+5 中間     5.802694e-06 -0.06946387
+6-10 溫暖  3.172570e-06  0.26826507
+Total      1.795053e-05  0.53653014
+
+$party_tpp
+             Target Unweighted N Unweighted %    Wtd N     Wtd % Change in %
+0-4 冷淡  0.4538188          336    0.4699301 324.4861 0.4538268 -0.01610331
+5 中間    0.2664298          225    0.3146853 190.4910 0.2664210 -0.04826427
+6-10 溫暖 0.2797513          154    0.2153846 200.0228 0.2797522  0.06436759
+Total     1.0000000          715    1.0000000 715.0000 1.0000000  0.12873518
+           Resid. Disc. Orig. Disc.
+0-4 冷淡  -7.927502e-06 -0.01611124
+5 中間     8.798925e-06 -0.04825547
+6-10 溫暖 -8.714235e-07  0.06436672
+Total      1.759785e-05  0.12873343
+
