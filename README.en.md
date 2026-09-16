@@ -95,12 +95,7 @@ Every weight file has the same four columns — `memberId, caseid, weight, exclu
 **How to tell whether the weights are any good** (deff, effective sample size, TVD, population coverage, the λ trade-off curve, AUC): see the "Reading the output" section of [`data/code/README.md`](data/code/README.md).
 
 ---
-
-## What is and is not in this repo
-
-**Included**: the scripts for all three methods, the TEDS joint tables, and the weighting results (weights, distribution tables, diagnostics, a representative set of figures).
-
-**Not included** (all in `.gitignore`):
+**Note**:
 These files carry personal identifiers and confidential answers from respondents. If you need them, please contact the author.
 
 | Missing | Consequence | Original location |
