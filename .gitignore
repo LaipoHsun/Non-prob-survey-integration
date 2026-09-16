@@ -147,3 +147,76 @@ output/crosswalk/candidates/*
 #     都放行（因為它沒有斜線，不受根目錄錨定），連帶讓
 #     data/NTUWS/output/ 底下的 .md 檔漏出去。這裡明確擋回來。
 /data/NTUWS/output/
+
+# ============================================================
+# multilevel calibration + PAPP-BART（2026-09）
+#
+# 放行：兩個新方法的程式、TEDS 聯合分布表、三種方法的權數與報表。
+# 不放行：個人層的 analysis_*.csv、以及每個 run 重複產生的分布圖／合併對比圖
+#         （collapse_ 圖與加權方法無關，60 個檔其實只有 6 張不同的圖）。
+# 圖只留代表性的：教育的分布圖 + 各方法專有的診斷圖。
+# 一樣要逐層放行，而且這一段必須在檔案最後面。
+# ============================================================
+
+# --- 文件 ----------------------------------------------------
+!/README.en.md
+!/data/code/*.en.md
+!/data/code/Calculate_stat_population_from_TEDS/*.en.md
+
+# --- 母體：TEDS 聯合分布表 -----------------------------------
+!/data/output/portion_of_TEDS/*/joint/
+/data/output/portion_of_TEDS/*/joint/*
+!/data/output/portion_of_TEDS/*/joint/joint_full_raw.csv
+!/data/output/portion_of_TEDS/*/joint/pooled_sources.csv
+
+# --- multical：一個 run 一個子資料夾 --------------------------
+!/data/output/multical/
+/data/output/multical/*
+!/data/output/multical/*/
+/data/output/multical/*/*
+!/data/output/multical/*/*/
+/data/output/multical/*/*/*
+!/data/output/multical/*/*/weights_*.csv
+!/data/output/multical/*/*/dist_*.csv
+!/data/output/multical/*/*/diagnostics_*.txt
+!/data/output/multical/*/*/target_*.csv
+!/data/output/multical/*/*/coverage_*.csv
+!/data/output/multical/*/*/lambda_path_*.csv
+!/data/output/multical/*/*/balance_*.csv
+!/data/output/multical/*/*/balance_*.png
+!/data/output/multical/*/*/frontier_*.png
+!/data/output/multical/*/*/dist_*_edu.png
+
+# --- papp_bart：一種 trimming 一個子資料夾 --------------------
+!/data/output/papp_bart/
+/data/output/papp_bart/*
+!/data/output/papp_bart/*/
+/data/output/papp_bart/*/*
+!/data/output/papp_bart/*/*/
+/data/output/papp_bart/*/*/*
+!/data/output/papp_bart/*/*/weights_*.csv
+!/data/output/papp_bart/*/*/weights_*.png
+!/data/output/papp_bart/*/*/dist_*.csv
+!/data/output/papp_bart/*/*/diagnostics_*.txt
+!/data/output/papp_bart/*/*/overlap_*.png
+!/data/output/papp_bart/*/*/dist_*_edu.png
+
+# --- raking：沒有子資料夾，只留代表性的圖 ---------------------
+!/data/output/raking/*/dist_*_edu.png
+
+# --- 個人層資料：一人一列，一律不上傳 -------------------------
+# analysis_*.csv 含每個人的年齡、教育、三黨情感溫度計
+/data/output/multical/*/*/analysis_*.csv
+/data/output/papp_bart/*/*/analysis_*.csv
+
+# --- 暫不上傳：比較程式還在調整 -------------------------------
+/data/code/compare_raking_multical.R
+# raking 的圖同樣只留代表性的那一張（舊規則會把整個資料夾的 png 放行）
+/data/output/raking/*/collapse_*.png
+/data/output/raking/*/dist_*_age.png
+/data/output/raking/*/dist_*_arear.png
+/data/output/raking/*/dist_*_ethnicity.png
+/data/output/raking/*/dist_*_party_dpp.png
+/data/output/raking/*/dist_*_party_kmt.png
+/data/output/raking/*/dist_*_party_tpp.png
+/data/output/raking/*/dist_*_sex.png

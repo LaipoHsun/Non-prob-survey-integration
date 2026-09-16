@@ -1,0 +1,78 @@
+PAPP_BART_NTUWS.R  診斷報告   2026-09-16 12:18:20
+
+樣本：member_pooled（基準年 2024）；方法：papp_bart_trimiqr5／papp_bart_notrim
+Phase0 人口學：14870 人
+Phase2 溫度計：14245 個 out_id（含拆分）
+併入人口學後：14245 筆；無人口學資料 759 筆
+重複 memberId 處理 -> smart：回答一致去重 0 筆；回答不同視為獨立樣本 0 筆
+進入分析的列數：14245
+
+---- collapse 與對齊檢查 ----
+  sex        版本=原始  類別數=2  NA=759 (5.3%)  類別：男性 / 女性
+  age        版本=A2      類別數=5  NA=798 (5.6%)  類別：20至29歲 / 30至39歲 / 40至49歲 / 50至59歲 / 60歲及以上
+  edu：類別「專科／專科或大學」對不上，自動退回版本 C
+  edu        版本=C       類別數=2  NA=3007 (21.1%)  類別：高中職及以下 / 專科及以上
+  ! arear：母體不含外島，外島 127 人設為 NA
+  arear      版本=A       類別數=6  NA=886 (6.2%)  類別：北北基宜蘭區 / 桃竹苗區 / 中彰投區 / 雲嘉南區 / 高屏區 / 花東區
+  ! party_kmt：3786 筆為非整數（跨波 mean），已四捨五入為整數
+  party_kmt  版本=C       類別數=3  NA=659 (4.6%)  類別：0-4 冷淡 / 5 中間 / 6-10 溫暖
+  ! party_dpp：3734 筆為非整數（跨波 mean），已四捨五入為整數
+  party_dpp  版本=C       類別數=3  NA=587 (4.1%)  類別：0-4 冷淡 / 5 中間 / 6-10 溫暖
+  ! party_tpp：3344 筆為非整數（跨波 mean），已四捨五入為整數
+  party_tpp  版本=C       類別數=3  NA=2113 (14.8%)  類別：0-4 冷淡 / 5 中間 / 6-10 溫暖
+
+---- 參考樣本（TEDS）----
+聯合表：data/output/portion_of_TEDS/2025/joint/joint_full_raw.csv（2446 格；TEDS n = 2649）
+  捨棄含 NA／對不上類別的格：42 格（TEDS n = 42，1.6%）
+  參考樣本 n_R = 2607；W：min=0.435 max=2.904 mean=0.991
+  報表母體 = 參考樣本 W 加權分布；與 TARGET_FILES 邊際的最大差距：
+    sex        1.85 個百分點
+    age        1.85 個百分點
+    edu        2.39 個百分點
+    arear      0.68 個百分點
+    party_kmt  1.63 個百分點
+    party_dpp  1.53 個百分點
+    party_tpp  1.65 個百分點
+
+完整個案：8754 / 14245（因建模變數缺值排除 5491 人）
+
+---- 支撐檢查（RAKE_VARS 完整交叉）----
+  NTUWS 佔用 1655 格、TEDS 佔用 1088 格、兩者都有 764 格
+  NTUWS 落在 TEDS 沒有的格：28.6%（模型 A 靠 BART 平滑外推 π_R）
+  TEDS（W 加權）落在 NTUWS 沒有的格：19.4%（權數無法觸及的母體）
+
+---- 執行 PAPP-BART ----
+模型 A（wbart，ntree = 200）：logit(π_R) 的 pseudo-R² = 0.9721；σ 後驗平均 = 0.0506
+  NTUWS 預測的 Ŵ = 1/π̂_R（TEDS W 尺度；TEDS 的 W 範圍 0.435–2.904）：min=0.447 max=2.673
+模型 B（pbart，ntree = 50）：AUC = 0.805（樣本內）；Z = 1 的基準比例 = 0.771
+  ê 分位數（NTUWS）：1%=0.264 25%=0.791 50%=0.871 75%=0.931 99%=0.970
+  ê 分位數（TEDS） ：1%=0.109 25%=0.310 50%=0.603 75%=0.810 99%=0.956
+  NTUWS 的 ê 低於 TEDS 第 1 百分位：0.0%；高於 TEDS 第 99 百分位：6.6%
+BART 耗時 33.0 秒
+出圖／出表的變數：sex, age, edu, arear, ethnicity, party_kmt, party_dpp, party_tpp（其中 sex, age, edu, arear, party_kmt, party_dpp, party_tpp 有納入建模）
+
+==== 輸出：papp_bart_notrim_member_pooled ====
+未 trimming
+權數：min=0.145 max=31.005 mean=1.000 sd=1.675
+design effect = 3.805；有效樣本數 = 2301
+最大權數佔總和 0.35%；權數前 1% 的人佔總和 13.4%
+加權前→後與母體的最大差距（個百分點）：
+  age         23.06 →  1.11
+  arear        8.34 →  1.33
+  edu         33.09 →  1.47
+  ethnicity    2.85 →  1.64（未納入建模）
+  party_dpp   13.85 →  0.59
+  party_kmt   18.12 →  1.32
+  party_tpp    7.63 →  0.37
+  sex          2.27 →  0.43
+  [collapse 對比] sex：版本 原始 未做任何合併，略過
+  [collapse 對比] arear：版本 A 未做任何合併，略過
+  ! party_kmt：3786 筆為非整數（跨波 mean），已四捨五入為整數
+  ! party_dpp：3734 筆為非整數（跨波 mean），已四捨五入為整數
+  ! party_tpp：3344 筆為非整數（跨波 mean），已四捨五入為整數
+
+---- 設定 ----
+參考樣本：data/output/portion_of_TEDS/2025/joint/joint_full_raw.csv；報表母體 = weighted；pop_total = 1.98205e+07
+BART：ntree_a = 200；ntree_b = 50；ndpost = 1000；nskip = 100；seed = 20200205；cores = 1；e_clip = 1e-06
+trimming：none（c_iqr = 5；c_entropy = 6；maxit = 100）
+建模欄位（24 個 0/1 欄）：sex=男性, sex=女性, age=20至29歲, age=30至39歲, age=40至49歲, age=50至59歲, age=60歲及以上, edu=高中職及以下, edu=專科及以上, arear=北北基宜蘭區, arear=桃竹苗區, arear=中彰投區, arear=雲嘉南區, arear=高屏區, arear=花東區, party_kmt=0-4 冷淡, party_kmt=5 中間, party_kmt=6-10 溫暖, party_dpp=0-4 冷淡, party_dpp=5 中間, party_dpp=6-10 溫暖, party_tpp=0-4 冷淡, party_tpp=5 中間, party_tpp=6-10 溫暖

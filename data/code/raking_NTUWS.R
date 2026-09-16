@@ -40,16 +40,26 @@ WAVE_YEAR   <- NA             # 調查年（算年齡用）。NA = 由 WAVE 名�
 
 TARGET_DIR  <- "data/Input/population_targets"
 
-# 每個變數各自指定母體檔，可以混用不同來源
+# 每個變數各自指定母體檔，可以混用不同來源。TARGET_SOURCE = "joint" 時這些檔只用來
+# 決定類別（harmonize、collapse、對齊檢查），年份要和聯合表一致（區域、年齡組的標籤不同）
 TARGET_FILES <- c(
-  sex       = "targets_census_2024.csv",
-  age       = "targets_census_2024.csv",
-  edu       = "targets_census_2024.csv",
-  arear     = "targets_census_2024.csv",
-  ethnicity = "targets_teds_2024_ind.csv",
-  party_kmt = "targets_teds_2024_ind.csv",
-  party_dpp = "targets_teds_2024_ind.csv",
-  party_tpp = "targets_teds_2024_ind.csv"
+  sex       = "targets_census_2025.csv",
+  age       = "targets_census_2025.csv",
+  edu       = "targets_census_2025.csv",
+  arear     = "targets_census_2025.csv",
+  ethnicity = "targets_teds_2025.csv",
+  party_kmt = "targets_teds_2025.csv",
+  party_dpp = "targets_teds_2025.csv",
+  party_tpp = "targets_teds_2025.csv"
+)
+
+# 母體目標的來源：
+#   "joint" TEDS 聯合表依 JOINT$count_col 加總的邊際（主分析；與 MultiCalibration、PAPP-BART 同一個母體）
+#   "files" TARGET_FILES 的邊際
+TARGET_SOURCE <- "joint"
+JOINT <- list(
+  file      = "data/output/portion_of_TEDS/2025/joint/joint_full_raw.csv",
+  count_col = "n_wt"   # "n_wt"（TEDS W 加權）／"n"（未加權）
 )
 
 # 這次真的要拿來 raking 的欄位
@@ -57,7 +67,7 @@ RAKE_VARS <- c("sex", "age", "edu", "arear","party_kmt","party_dpp","party_tpp")
 
 # 類別合併設定：給預設代號（見 README），或直接給自訂 list
 COLLAPSE <- list(
-  age       = "A",
+  age       = "A2",   # 18–19 歲兩邊都設為 NA（LS_23NY 沒有 18–19 歲選項；母體定義 = 20 歲以上）
   arear     = "A",
   edu       = "B",
   ethnicity = "4class",
@@ -84,7 +94,8 @@ ANESRAKE <- list(cap = 5, choosemethod = "total", type = "pctlim",
 # 欄位自動偵測失敗時在這裡指定欄名，例如 COLUMN_OVERRIDE <- c(edu = "S3 ")
 COLUMN_OVERRIDE <- c()
 
-OUT_DIR <- NA                  # NA = data/output/raking/<WAVE>
+OUT_ROOT <- "data/output"      # 輸出根目錄；實驗（例如合併聯合表、leave-one-variable-out）可以指到別處
+OUT_DIR  <- NA                 # NA = <OUT_ROOT>/raking/<WAVE>
 
 # ############################################################################
 # ## 以下為引擎，一般不需要修改 ##############################################
@@ -106,15 +117,44 @@ find_root <- function() {
   p
 }
 .args <- commandArgs(trailingOnly = TRUE)
-if (length(.args) >= 1 && nzchar(.args[1])) {
-  if (identical(.args[1], "member")) SAMPLE_TYPE <- "member"
-  else { SAMPLE_TYPE <- "wave"; WAVE <- .args[1] }
+# 命令列：第一個不含「=」的參數是樣本（member 或波次名）；其餘 key=value 覆寫 CONFIG
+#   joint=2024_ind   → data/output/portion_of_TEDS/2024_ind/joint/joint_full_raw.csv（也可給完整路徑）
+#   count_col=n  target=files
+#   drop=edu         從 RAKE_VARS 拿掉這些變數（逗號分隔）
+#   out_root=data/output/experiments/xxx   輸出根目錄
+.kv  <- grepl("=", .args, fixed = TRUE)
+.pos <- .args[!.kv & nzchar(.args)]
+if (length(.pos) >= 1) {
+  if (identical(.pos[1], "member")) SAMPLE_TYPE <- "member"
+  else { SAMPLE_TYPE <- "wave"; WAVE <- .pos[1] }
 }
-run_label <- if (identical(SAMPLE_TYPE, "member")) "member_pooled" else WAVE
+for (.a in .args[.kv]) {
+  .key <- sub("=.*$", "", .a); .val <- sub("^[^=]*=", "", .a)
+  switch(.key,
+    joint     = JOINT$file <- if (grepl("/", .val, fixed = TRUE)) .val else
+                  file.path("data/output/portion_of_TEDS", .val, "joint/joint_full_raw.csv"),
+    count_col = JOINT$count_col <- .val,
+    target    = TARGET_SOURCE <- .val,
+    drop      = RAKE_VARS <- {
+                  .d <- strsplit(.val, ",", fixed = TRUE)[[1]]
+                  if (length(setdiff(.d, RAKE_VARS)))
+                    stop("drop= 的變數不在 RAKE_VARS 裡：", paste(setdiff(.d, RAKE_VARS), collapse = ", "))
+                  setdiff(RAKE_VARS, .d)
+                },
+    out_root  = OUT_ROOT <- .val,
+    collapse  = for (.c in strsplit(.val, ",", fixed = TRUE)[[1]]) {
+                  .p <- strsplit(.c, ":", fixed = TRUE)[[1]]
+                  if (length(.p) != 2) stop("collapse= 的格式是 變數:代號，例如 collapse=arear:B")
+                  COLLAPSE[[.p[1]]] <- .p[2]
+                },
+    stop("不認得的命令列參數：", .key, "（可用 joint、count_col、target、drop、out_root、collapse）"))
+}
+run_label  <- if (identical(SAMPLE_TYPE, "member")) "member_pooled" else WAVE
+joint_name <- basename(dirname(dirname(JOINT$file)))
 
 root    <- find_root()
 abs_in  <- function(p) if (grepl("^[/~]", p) || file.exists(p)) p else file.path(root, p)
-out_dir <- if (is.na(OUT_DIR)) file.path(root, "data", "output", "raking", run_label) else abs_in(OUT_DIR)
+out_dir <- if (is.na(OUT_DIR)) file.path(abs_in(OUT_ROOT), "raking", run_label) else abs_in(OUT_DIR)
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 NUMERIC_VARS <- c("party_kmt", "party_dpp", "party_tpp")   # 以 code 而非 label 對齊
@@ -626,6 +666,63 @@ if (length(problems)) {
 }
 
 # ---------------------------------------------------------------------------
+# 5a. 母體目標：TEDS 聯合表（TARGET_SOURCE = "joint"）
+# ---------------------------------------------------------------------------
+# TARGET_FILES 只用來決定類別；目標比例改成聯合表依 JOINT$count_col 加總。
+# 只保留 RAKE_VARS 在 collapse 後都有值、類別對得上的格，
+# raking、MultiCalibration、PAPP-BART 因此用同一群 TEDS 受訪者當母體。
+if (!TARGET_SOURCE %in% c("joint", "files")) stop("TARGET_SOURCE 必須是 \"joint\" 或 \"files\"")
+if (!JOINT$count_col %in% c("n", "n_wt")) stop("JOINT$count_col 必須是 \"n\" 或 \"n_wt\"")
+tj_path <- abs_in(JOINT$file)
+if (!file.exists(tj_path)) stop("找不到聯合表：", tj_path)
+tj <- read.csv(tj_path, fileEncoding = "UTF-8", colClasses = "character", check.names = FALSE)
+tj_miss <- setdiff(c(RAKE_VARS, "n", "n_wt"), names(tj))
+if (length(tj_miss)) stop("聯合表缺少欄位：", paste(tj_miss, collapse = ", "))
+tj_vars <- intersect(names(TARGET_FILES), names(tj))
+tj_raw  <- lapply(setNames(tj_vars, tj_vars), function(v)
+  if (v %in% NUMERIC_VARS) as.character(suppressWarnings(as.numeric(tj[[v]]))) else norm_tw(tj[[v]]))  # "05" -> "5"
+tj_keep <- Reduce(`&`, lapply(RAKE_VARS, function(v) {
+  x <- apply_collapse(tj_raw[[v]], get_spec(v))   # edu 會用自動退回後的版本
+  !is.na(x) & x %in% built[[v]]$levels
+}))
+if (!any(tj_keep)) stop("聯合表沒有任何一格對得上 RAKE_VARS 的類別；TARGET_FILES 與聯合表的年份是否一致？")
+tj_count <- as.numeric(tj[[JOINT$count_col]])[tj_keep]
+tj_margin <- function(v, spec, levels) {
+  x  <- apply_collapse(tj_raw[[v]][tj_keep], spec)
+  ok <- !is.na(x) & x %in% levels
+  s  <- tapply(tj_count[ok], factor(x[ok], levels = levels), sum)
+  s[is.na(s)] <- 0
+  as.numeric(s) / sum(s)
+}
+use_joint_target <- function(b, v, spec) {
+  if (!identical(TARGET_SOURCE, "joint") || !v %in% tj_vars) return(b)
+  p <- tj_margin(v, spec, b$levels)
+  b$target$prop <- p
+  b$target$N    <- p * sum(tj_count)
+  b
+}
+target_label <- function(v) {
+  if (identical(TARGET_SOURCE, "joint") && v %in% tj_vars)
+    sprintf("TEDS %s 聯合表（%s）", joint_name, if (identical(JOINT$count_col, "n_wt")) "W 加權" else "未加權")
+  else TARGET_FILES[[v]]
+}
+
+say("")
+if (identical(TARGET_SOURCE, "joint")) {
+  say("---- 母體目標：", JOINT$file, "（", JOINT$count_col, "）----")
+  say(sprintf("  使用 %d / %d 格（TEDS n = %g / %g）", sum(tj_keep), nrow(tj),
+              sum(as.numeric(tj$n)[tj_keep]), sum(as.numeric(tj$n))))
+  say("  與 TARGET_FILES 邊際的最大差距：")
+  for (v in RAKE_VARS) {
+    old <- built[[v]]$target$prop
+    built[[v]] <- use_joint_target(built[[v]], v, get_spec(v))
+    say(sprintf("    %-10s %.2f 個百分點", v, 100 * max(abs(built[[v]]$target$prop - old))))
+    zero <- built[[v]]$levels[built[[v]]$target$prop == 0]
+    if (length(zero)) say("    ! ", v, " 的聯合表目標在「", paste(zero, collapse = "／"), "」為 0")
+  }
+} else say("---- 母體目標：TARGET_FILES ----")
+
+# ---------------------------------------------------------------------------
 # 6. anesrake
 # ---------------------------------------------------------------------------
 df <- data.frame(caseid = sam$caseid)
@@ -684,12 +781,22 @@ for (v in names(TARGET_FILES)) {
   if (v %in% RAKE_VARS) { report_vars <- c(report_vars, v); next }
   b <- tryCatch(build_var(sam, v, get_spec(v)), error = function(e) NULL)
   if (is.null(b) || all(is.na(b$values))) next
+  # edu 沒有參與調整時（例如 drop=edu）也要自動退回較粗版本，否則對不上就不會出表
+  if (v == "edu" && isTRUE(OPTS$edu_auto_fallback) && is.character(COLLAPSE$edu)) {
+    order_fb <- c("A", "B", "C")
+    while (length(b$extra) && match(COLLAPSE$edu, order_fb) < length(order_fb)) {
+      nxt <- order_fb[match(COLLAPSE$edu, order_fb) + 1]
+      say("  [出圖] edu：類別「", paste(b$extra, collapse = "／"), "」對不上，自動退回版本 ", nxt)
+      COLLAPSE$edu <- nxt
+      b <- build_var(sam, v, PRESETS$edu[[nxt]])
+    }
+  }
   if (length(b$extra)) {
     say("  [僅出圖] ", v, "：樣本有母體沒有的類別 ", paste(b$extra, collapse = "／"),
         "，不列入報表")
     next
   }
-  built[[v]] <- b
+  built[[v]] <- use_joint_target(b, v, get_spec(v))
   report_vars <- c(report_vars, v)
 }
 say("出圖／出表的變數：", paste(report_vars, collapse = ", "),
@@ -752,7 +859,7 @@ for (v in report_vars) {
     labs(title = sprintf("%s：%s（collapse 版本 %s）%s", run_label, v, ver_name(v),
                          if (v %in% RAKE_VARS) "" else "【未納入 raking】"),
          subtitle = sprintf("母體來源：%s；完整個案 N = %s",
-                            TARGET_FILES[[v]], format(sum(complete), big.mark = ",")),
+                            target_label(v), format(sum(complete), big.mark = ",")),
          x = NULL, y = "百分比", fill = NULL) +
     base_theme()
   ggsave(file.path(out_dir, sprintf("dist_%s_%s.png", run_label, v)), p,
@@ -782,6 +889,7 @@ for (v in report_vars) {
   }
   before <- tryCatch(build_var(sam, v, list()), error = function(e) NULL)
   if (is.null(before)) next
+  before <- use_joint_target(before, v, list())
 
   d <- bind_rows(
     side_by_side(before)   |> mutate(stage = sprintf("collapse 前（%d 類）",
@@ -814,7 +922,13 @@ for (v in report_vars) {
 diag_path <- file.path(out_dir, sprintf("diagnostics_%s.txt", run_label))
 con <- file(diag_path, open = "w", encoding = "UTF-8")
 writeLines(c(sprintf("raking_NTUWS.R  診斷報告   %s", format(Sys.time())), "",
-             log_lines, "", "---- anesrake summary ----"), con)
+             log_lines, "", "---- 設定 ----",
+             sprintf("RAKE_VARS = %s", paste(RAKE_VARS, collapse = ", ")),
+             sprintf("TARGET_SOURCE = %s；聯合表：%s；count_col = %s", TARGET_SOURCE, JOINT$file, JOINT$count_col),
+             sprintf("anesrake：cap = %g；choosemethod = %s；type = %s；pctlim = %g；nlim = %d；maxit = %d；force1 = %s",
+                     ANESRAKE$cap, ANESRAKE$choosemethod, ANESRAKE$type, ANESRAKE$pctlim,
+                     ANESRAKE$nlim, ANESRAKE$maxit, ANESRAKE$force1),
+             "", "---- anesrake summary ----"), con)
 capture.output(print(summary(rk)), file = con, append = TRUE)
 close(con)
 

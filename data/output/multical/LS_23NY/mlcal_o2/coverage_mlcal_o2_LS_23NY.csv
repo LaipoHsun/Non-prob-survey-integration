@@ -1,0 +1,65 @@
+"order","vars","cells_target","cells_sample","cells_uncovered","pop_uncovered","sample_no_target"
+1,"sex",2,2,0,0,0
+1,"age",5,5,0,0,0
+1,"edu",3,3,0,0,0
+1,"arear",6,6,0,0,0
+1,"party_kmt",3,3,0,0,0
+1,"party_dpp",3,3,0,0,0
+1,"party_tpp",3,3,0,0,0
+2,"sex × age",10,10,0,0,0
+2,"sex × edu",6,6,0,0,0
+2,"sex × arear",12,12,0,0,0
+2,"sex × party_kmt",6,6,0,0,0
+2,"sex × party_dpp",6,6,0,0,0
+2,"sex × party_tpp",6,6,0,0,0
+2,"age × edu",15,15,0,0,0
+2,"age × arear",30,30,0,0,0
+2,"age × party_kmt",15,15,0,0,0
+2,"age × party_dpp",15,15,0,0,0
+2,"age × party_tpp",15,15,0,0,0
+2,"edu × arear",18,18,0,0,0
+2,"edu × party_kmt",9,9,0,0,0
+2,"edu × party_dpp",9,9,0,0,0
+2,"edu × party_tpp",9,9,0,0,0
+2,"arear × party_kmt",18,18,0,0,0
+2,"arear × party_dpp",18,18,0,0,0
+2,"arear × party_tpp",18,18,0,0,0
+2,"party_kmt × party_dpp",9,9,0,0,0
+2,"party_kmt × party_tpp",9,9,0,0,0
+2,"party_dpp × party_tpp",9,9,0,0,0
+3,"sex × age × edu",30,30,0,0,0
+3,"sex × age × arear",60,60,0,0,0
+3,"sex × age × party_kmt",30,30,0,0,0
+3,"sex × age × party_dpp",30,30,0,0,0
+3,"sex × age × party_tpp",30,30,0,0,0
+3,"sex × edu × arear",36,36,0,0,0
+3,"sex × edu × party_kmt",18,18,0,0,0
+3,"sex × edu × party_dpp",18,18,0,0,0
+3,"sex × edu × party_tpp",18,18,0,0,0
+3,"sex × arear × party_kmt",36,36,0,0,0
+3,"sex × arear × party_dpp",36,36,0,0,0
+3,"sex × arear × party_tpp",36,36,0,0,0
+3,"sex × party_kmt × party_dpp",18,18,0,0,0
+3,"sex × party_kmt × party_tpp",18,18,0,0,0
+3,"sex × party_dpp × party_tpp",18,18,0,0,0
+3,"age × edu × arear",89,85,4,0.00793277582748246,0
+3,"age × edu × party_kmt",45,44,1,0.00178326739362178,0
+3,"age × edu × party_dpp",45,45,0,0,0
+3,"age × edu × party_tpp",45,45,0,0,0
+3,"age × arear × party_kmt",90,89,1,0.00145214156021687,0
+3,"age × arear × party_dpp",90,88,2,0.00386476823079446,0
+3,"age × arear × party_tpp",90,88,2,0.0014771538271158,0
+3,"age × party_kmt × party_dpp",45,45,0,0,0
+3,"age × party_kmt × party_tpp",45,45,0,0,0
+3,"age × party_dpp × party_tpp",45,45,0,0,0
+3,"edu × arear × party_kmt",54,54,0,0,0
+3,"edu × arear × party_dpp",54,54,0,0,0
+3,"edu × arear × party_tpp",54,54,0,0,0
+3,"edu × party_kmt × party_dpp",27,27,0,0,0
+3,"edu × party_kmt × party_tpp",27,27,0,0,0
+3,"edu × party_dpp × party_tpp",27,27,0,0,0
+3,"arear × party_kmt × party_dpp",54,52,2,0.00357210092190304,0
+3,"arear × party_kmt × party_tpp",54,54,0,0,0
+3,"arear × party_dpp × party_tpp",54,53,1,0.00167899021482259,0
+3,"party_kmt × party_dpp × party_tpp",27,27,0,0,0
+7,"sex × age × edu × arear × party_kmt × party_dpp × party_tpp",1229,1171,678,0.420072510943782,0.347826086956522
